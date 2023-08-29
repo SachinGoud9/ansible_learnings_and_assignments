@@ -1,0 +1,31 @@
+---
+- name: Installing and Configuring Apache
+  hosts: ansible-target1
+  become: yes
+  tasks:
+    - name: Install Apache
+      yum:
+        name: httpd
+        state: present
+    - name: Starting Apache Service
+      systemd:
+        name: httpd
+        state: started
+        enabled: yes
+
+- name: Install Services
+  hosts: ansible-target1,ansible-target2
+  become: yes
+  vars:
+    services_to_be_installed:
+      - httpd
+      - maven
+      - java
+      - docker
+
+  tasks:
+    - name: Install services
+      yum:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ services_to_be_installed }}"
